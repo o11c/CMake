@@ -597,6 +597,11 @@ public:
   static bool FileIsDirectory(const char* name);
   
   /**
+   * Return true if the file is executable or if unknown
+   */
+  static bool FileIsExecutable(const char* name);
+
+  /**
    * Return true if the file is a symlink
    */
   static bool FileIsSymlink(const char* name);

@@ -2409,6 +2409,7 @@ kwsys_stl::string SystemTools::FindProgram(
     tryPath = *p;
     tryPath += name;
     if(SystemTools::FileExists(tryPath.c_str()) &&
+       SystemTools::FileIsExecutable(tryPath.c_str()) &&
        !SystemTools::FileIsDirectory(tryPath.c_str()))
       {
       return SystemTools::CollapseFullPath(tryPath.c_str());
@@ -2586,6 +2587,26 @@ bool SystemTools::FileIsDirectory(const char* name)
   else
     {
     return false;
+    }
+}
+
+// The old behavior was to assume all files were executable,
+// so err on that side.
+bool SystemTools::FileIsExecutable(const char* name)
+{
+  // Now check the file node type.
+  struct stat fs;
+  if(stat(name, &fs) == 0)
+    {
+#if defined( _WIN32 )
+    return true;
+#else
+    return (fs.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) != 0;
+#endif
+    }
+  else
+    {
+    return true;
     }
 }
 
